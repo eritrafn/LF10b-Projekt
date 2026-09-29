@@ -1,0 +1,37 @@
+---
+
+- hosts: proxmox
+  become: true
+  vars:
+    debian_codename: trixie
+
+  tasks:
+    - name: Enterprise-Repo (pve-enterprise.list) deaktivieren, falls vorhanden
+      ansible.builtin.replace:
+        path: /etc/apt/sources.list.d/pve-enterprise.list
+        regexp: '^deb '
+        replace: '#deb '
+      ignore_errors: true
+
+    - name: Ceph Enterprise-Repo deaktivieren, falls vorhanden
+      ansible.builtin.replace:
+        path: /etc/apt/sources.list.d/ceph.list
+        regexp: '^deb '
+        replace: '#deb '
+      ignore_errors: true
+
+    - name: No-Subscription-Repo eintragen
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/pve-no-subscription.list
+        content: "deb http://download.proxmox.com/debian/pve {{ debian_codename }} pve-no-subscription\n"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Paketlisten aktualisieren
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: System aktualisieren
+      ansible.builtin.apt:
+        upgrade: dist
