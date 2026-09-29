@@ -32,7 +32,7 @@ Ziel dieses Projekts ist die Einrichtung einer hochverfügbaren Virtualisierungs
 
 ## Erstellen Sie eine grobe Übersicht, wie die Architektur des Projekes aussehen sollen.
 
-![plot](./LF10b-Projekt.svg)
+![Architektur](./images/LF10b-Projekt.svg)
 
 ### Hardware
 * 2 Server aus dem IT-Labor
