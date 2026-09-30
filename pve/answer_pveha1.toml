@@ -1,0 +1,24 @@
+[global]
+keyboard = "de"
+country = "de"
+fqdn = "pveha1.internal"
+mailto = "root@localhost"
+timezone = "Europe/Berlin"
+root-password = "!123Abcd"
+root-ssh-keys = ["ssh-ed25519 AAAA... pveha-lab"]
+
+[network]
+source = "from-answer"
+cidr = "192.168.88.231/24"
+gateway = "192.168.88.1"
+dns = "192.168.88.1"
+filter.ID_NET_NAME = "nic0"
+
+[disk-setup]
+filesystem = "zfs"
+zfs.raid = "raidz1"
+disk-list = ["sda", "sdb", "sdc"]
+
+[first-boot]
+source = "from-iso"
+ordering = "before-network"
