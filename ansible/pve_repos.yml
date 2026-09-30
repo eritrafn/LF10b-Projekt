@@ -6,19 +6,22 @@
     debian_codename: trixie
 
   tasks:
-    - name: Enterprise-Repo (pve-enterprise.list) deaktivieren, falls vorhanden
-      ansible.builtin.replace:
-        path: /etc/apt/sources.list.d/pve-enterprise.list
-        regexp: '^deb '
-        replace: '#deb '
-      ignore_errors: true
+    - name: Mögliche Enterprise-Repo-Dateien prüfen (altes .list- und neues .sources-Format)
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /etc/apt/sources.list.d/pve-enterprise.list
+        - /etc/apt/sources.list.d/pve-enterprise.sources
+        - /etc/apt/sources.list.d/ceph.list
+        - /etc/apt/sources.list.d/ceph.sources
+      register: enterprise_repo_files
 
-    - name: Ceph Enterprise-Repo deaktivieren, falls vorhanden
-      ansible.builtin.replace:
-        path: /etc/apt/sources.list.d/ceph.list
-        regexp: '^deb '
-        replace: '#deb '
-      ignore_errors: true
+    - name: Gefundene Enterprise-Repo-Dateien deaktivieren (umbenennen)
+      ansible.builtin.command: mv {{ item.item }} {{ item.item }}.disabled
+      loop: "{{ enterprise_repo_files.results }}"
+      when: item.stat.exists
+      args:
+        creates: "{{ item.item }}.disabled"
 
     - name: No-Subscription-Repo eintragen
       ansible.builtin.copy:
