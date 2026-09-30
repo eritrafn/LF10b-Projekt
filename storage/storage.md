@@ -1,4 +1,13 @@
-# Storage-Server konfiguration
+# Storage-Server Konfiguration
+
+## Namesnauflösung
+
+Der `/etc/hosts` folgende Einträge anfügen:
+```
+192.168.88.231 pveha1.internal pveha1
+192.168.88.232 pveha2.internal pveha2
+192.168.88.240 pveha-sto.internal pveha-sto
+```
 
 ## ZFS installieren
 ```bash
