@@ -14,6 +14,12 @@ Der `/etc/hosts` folgende Einträge anfügen:
 sudo apt install zfsutils-linux
 ```
 
+## HDD bereinigen
+```bash
+lsblk
+sudo wipefs -a /dev/sda
+```
+
 ## ZFS konfigurieren
 
 ### Pool
@@ -24,26 +30,19 @@ sudo zpool create pveha-sto-pool /dev/sda
 ```bash
 sudo zfs create pveha-sto-pool/backup
 
-sudo zfs set compression=lz4 pveha-sto-pool/backup
-sudo zfs set atime=off pveha-sto-pool/backup
-sudo zfs set xattr=sa pveha-sto-pool/backup
+sudo zfs set compression=lz4 atime=off xattr=sa pveha-sto-pool/backup
 ```
 
 ```bash
 sudo zfs create pveha-sto-pool/pve-storage
 
-sudo zfs set compression=lz4 pveha-sto-pool/pve-storage
-sudo zfs set atime=off pveha-sto-pool/pve-storage
-sudo zfs set xattr=sa pveha-sto-pool/pve-storage
-sudo zfs set recordsize=64K pveha-sto-pool/pve-storage
+sudo zfs set compression=lz4 atime=off xattr=sa recordsize=64K pveha-sto-pool/pve-storage
 ```
 
 ```bash
 sudo zfs create pveha-sto-pool/iso
 
-sudo zfs set compression=lz4 pveha-sto-pool/iso
-sudo zfs set atime=off pveha-sto-pool/iso
-sudo zfs set recordsize=1M pveha-sto-pool/iso
+sudo zfs set compression=lz4 atime=off xattr=sa pveha-sto-pool/iso
 ```
 
 ## NFS Shares
@@ -55,4 +54,11 @@ In `/etc/exports` schreiben:
 ```
 ```bash
 sudo exportfs -ra
+```
+
+## Kontrolle
+```bash
+zpool status
+zfs list
+sudo exportfs -v
 ```
