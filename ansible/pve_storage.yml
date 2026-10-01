@@ -1,0 +1,38 @@
+- hosts: pve1.internal
+  become: true
+  vars:
+    nfs_server: pveha-sto.internal
+    nfs_storages:
+      - name: nfs-backup
+        export: /pveha-sto-pool/backup
+        content: backup
+      - name: nfs-vm-storage
+        export: /pveha-sto-pool/pve-storage
+        content: images
+      - name: nfs-iso
+        export: /pveha-sto-pool/iso
+        content: iso
+
+  tasks:
+    - name: Aktuellen Storage-Status abfragen
+      ansible.builtin.command: pvesm status
+      register: pvesm_status
+      changed_when: false
+
+    - name: NFS-Storages hinzufügen
+      ansible.builtin.command: >
+        pvesm add nfs {{ item.name }}
+        --server {{ nfs_server }}
+        --export {{ item.export }}
+        --content {{ item.content }}
+      loop: "{{ nfs_storages }}"
+      when: item.name not in pvesm_status.stdout
+
+    - name: Storage-Status erneut prüfen
+      ansible.builtin.command: pvesm status
+      register: pvesm_status_after
+      changed_when: false
+
+    - name: Ausgabe anzeigen
+      ansible.builtin.debug:
+        var: pvesm_status_after.stdout_lines
