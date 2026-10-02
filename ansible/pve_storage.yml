@@ -1,4 +1,4 @@
-- hosts: pve1.internal
+- hosts: pveha1.internal
   become: true
   vars:
     nfs_server: pveha-sto.internal

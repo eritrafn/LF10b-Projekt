@@ -1,0 +1,40 @@
+- hosts: storage
+  become: true
+  vars:
+    checkmk_server: "192.168.88.233"
+    checkmk_site: "pveha"
+    checkmk_agent_version: "2.5.0p12"
+    checkmk_automation_user: "agent_registration"
+
+  tasks:
+    - name: Checkmk-Agent-Paket über REST-API herunterladen
+      ansible.builtin.get_url:
+        url: "http://{{ checkmk_server }}/{{ checkmk_site }}/check_mk/api/1.0/domain-types/agent/actions/download/invoke?os_type=linux_deb"
+        dest: /tmp/check-mk-agent.deb
+        headers:
+          Authorization: "Bearer {{ checkmk_automation_user }} {{ checkmk_automation_secret }}"
+          Accept: "application/octet-stream"
+        mode: "0644"
+      no_log: true
+ 
+    - name: Checkmk-Agent installieren
+      ansible.builtin.apt:
+        deb: /tmp/check-mk-agent.deb
+ 
+    - name: Prüfen, ob Agent schon registriert ist
+      ansible.builtin.stat:
+        path: /var/lib/cmk-agent/registered_connections.json
+      register: cmk_registered
+ 
+    - name: Agent beim Checkmk-Server registrieren
+      ansible.builtin.command: >
+        cmk-agent-ctl register
+        --hostname {{ inventory_hostname_short }}
+        --server {{ checkmk_server }}
+        --site {{ checkmk_site }}
+        --user {{ checkmk_automation_user }}
+        --password {{ checkmk_automation_secret }}
+        --trust-cert
+      when: not cmk_registered.stat.exists
+      no_log: true
+  
