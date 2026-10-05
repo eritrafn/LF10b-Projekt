@@ -5,8 +5,9 @@
 - Der Storage-Server selbst hat keine Ausfallsicherheit. (architekturbedingt)
 
 ### Was sind die größten verbleibenden Risiken?
-- Wenn der Storage-Server ausfällt, sind die CT/VMs alle down, da die Dateien auf dem NFS-Share liegen.
+- Der Storage-Server verfügt über keine Form der Redundanz, es gubt nur eine Festplatte, nur ein Netzteil, etc. Wenn dieser ausfällt, sind die CT/VMs alle down, da die Dateien auf dem NFS-Share liegen.
 - Backups liegen ebenfalls auf dem Storage-Server und sind bei Ausfall von diesem ebenfalls nicht mehr verfügbar.
+    - Das wurde so gewählt, um den Hardwareaufwand für das Projekt geringer zu halten.
 
 ## In welchem Umfang konnten Sie Automatisierung umsetzen?
 - Nutzung von Answerfiles für die Proxmoxinstallation
@@ -20,6 +21,10 @@
 - Installation und Einrichtung von ProxmoxVE
 - Einrichtung eines PVE-Clusters
 - Storage-Server mit ZFS und NFS-Shares eingerichtet
+- Installation und Einrichtung von CheckMK in einem Container
+
+### Nicht erreichte Ziele
+- Erstellen einer VM auf dem Cluster. Bei jedem Versuch des Erstellens hat der entsprechende Node die Verbindung zu den NFS-Shares verloren.
 
 ## Anforderungen
 
@@ -58,12 +63,6 @@
 - [x] Mehrere Konfigurationen lassen sich miteinander kombinieren
     - Playbooks sind unabhängig voneinander
 - [x] Ein einzelner Konfigurationsschritt kann einfach und sauber rückgängig gemacht werden
-
-### Organisatorische Maßnahmen
-
-- [ ] Planung
-- [ ] Dokumentation
-- [ ] Versionskontrolle
 
 ### Bonus
 
