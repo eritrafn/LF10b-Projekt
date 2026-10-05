@@ -4,7 +4,7 @@ country = "de"
 fqdn = "pveha2.internal"
 mailto = "root@localhost"
 timezone = "Europe/Berlin"
-root-password = "root-password = "!123Abcd"
+root-password = "!123Abcd"
 root-ssh-keys = ["ssh-ed25519 AAAA... pveha-lab"]
 
 [network]
